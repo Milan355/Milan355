@@ -30,12 +30,34 @@ Dig for treasure across one big cursed island. Sell your loot at the harbour, bu
 
 A loop should take about 1–3 minutes. No long travel: zones sit next to each other and next to the hub.
 
-## 3. Map Layout
-One island. The hub sits at one end; zones follow in a line, each behind a gate.
+## 3. Map
+The map must look like a real place built with care, not flat squares with props dropped on top. Players judge the game in the first 10 seconds, and the map is also what sells the thumbnails.
+
+### 3.1 Island shape and layout
+One large, organic island (no straight edges, no grid of square zones). The zones wrap **around a central mountain**, climbing and getting darker as the player progresses, so later zones stay close to the hub instead of being at the end of a long line.
 
 ```
-[ Hub: Harbour ] → [1 Shipwreck Shore] → [2 Smugglers' Cove] → [3 Frostfang Ruins] → [4 Cursed Jungle] → [5 Sunken Temple]
+                 (north)
+        [5 Sunken Temple]  — flooded sea cave on the north cliffs
+              /        \
+ [4 Cursed Jungle]    [3 Frostfang Ruins]  — high, snowy shoulder of the mountain
+       \     ( Mountain )     /
+ [1 Shipwreck Shore]   [2 Smugglers' Cove]
+              \        /
+             [ Hub: Harbour ]  — sheltered bay on the south coast
+                 (south)
 ```
+
+- **The mountain is the island's landmark,** visible from everywhere: a broken lighthouse or a giant skull rock at its top. It doubles as the game's icon/thumbnail shape.
+- **Every zone can see the next one:** players should see the snow above them in zone 2 and green curse glow beyond the ridge in zone 3. Seeing what's locked makes them want it.
+- **Elevation tells progress:** hub and zone 1 at sea level, zones 2–3 climb, zone 4 drops into a dark valley, zone 5 is down in a cave lagoon.
+- **Short walks:** hub to any unlocked zone in under 30 seconds on foot. Later, a fast-travel point (a ship's bell) at each zone entrance.
+
+### 3.2 Hub: the Harbour
+A cosy, lantern-lit harbour town in a sheltered bay. It is the only bright, safe place.
+- Docks with moored ships, a small plaza with a statue or fountain, and buildings for each station, all clustered so every station is visible from spawn.
+- Each station is its own building with a readable shape and a big sign: the Merchant's stall with an awning, a blacksmith for shovels (glowing forge), a sailmaker for backpacks, the Hexbreaker's crooked green-lit hut, a rebirth altar on a cliff overlooking the sea.
+- A clear main street leads to the zone 1 gate, so new players walk there without being told.
 
 | Hub spot | Function |
 |---|---|
@@ -47,7 +69,52 @@ One island. The hub sits at one end; zones follow in a line, each behind a gate.
 | Rebirth altar | Rebirth |
 | Leaderboards | Top coins, top rebirths |
 
-**Gates:** a glowing barrier between zones. A sign shows the zone name, coin cost and level needed. Unlocked gates become invisible and walkable for that player only (client-side collision), and the server also refuses digs in locked zones.
+### 3.3 Zone layouts
+Each zone has a main landmark, 3–4 smaller points of interest, and dig areas spread between them, so players move around instead of standing in one spot.
+
+| Zone | Main landmark | Points of interest | Ground and mood |
+|---|---|---|---|
+| Shipwreck Shore | A huge wrecked galleon broken in half on the beach | tide pools, a stranded rowboat, a palm grove, a sunken mast in the shallows | warm sand, dusk sun, gentle waves |
+| Smugglers' Cove | A smugglers' hideout built into the cliff, with rope bridges | stacked crates on a hidden jetty, a lookout tower, a cave mouth with ghost lanterns | dark wet rock, low fog, teal ghost light |
+| Frostfang Ruins | A frozen fortress gate with a giant ice-locked statue | a collapsed watchtower, frozen waterfall, an ice cave, a ship frozen into a lake | snow drifts, icy cliffs, falling snow, blue twilight |
+| Cursed Jungle | A giant dead tree with a glowing cursed idol at its roots | a rotting rope bridge over a gorge, overgrown temple steps, a swamp with fog, a witch doctor's hut | thick dark canopy, roots, vines, green curse glow, fireflies |
+| Sunken Temple | A half-flooded temple hall with huge stone pillars | a gold-lit altar room, a collapsed stairway, flooded corridors, treasure piles behind a broken wall | wet stone, still water, gold light shafts from above |
+
+### 3.4 Gates between zones
+Gates are themed landmarks, not plain see-through walls: a chained wooden palisade (zone 2), an iron portcullis in an ice wall (zone 3), a wall of cursed thorns (zone 4), a sealed stone door with a glowing lock (zone 5).
+- A sign shows the zone name, coin cost and level needed.
+- Unlocking plays a short moment: the gate opens or breaks apart with a sound and a light burst, and the zone name appears on screen.
+- Technical: the gate stays solid for players who haven't unlocked it (client-side collision), and the server refuses digs in locked zones.
+
+### 3.5 Quality standards (every area must pass)
+**Shape and terrain**
+- No flat, empty ground. Use height changes, slopes, cliffs, paths and terraces.
+- Coastlines and zone edges are irregular and natural; no straight lines or perfect squares.
+- Paths are visible and lead somewhere (a landmark, a gate, a station).
+- Transitions between zones blend (sand turns into rock, rock into snow) instead of a hard colour change on a line.
+
+**Detail and density**
+- Every area has three layers: **big** (landmarks, cliffs, buildings), **medium** (trees, rocks, wrecks, crates, fences) and **small** (grass tufts, pebbles, bones, rope, lanterns, debris).
+- Props are grouped into believable scenes ("a camp", "a spilled cargo pile") rather than scattered randomly.
+- No copy-paste look: vary the size, rotation and colour of repeated props.
+- No floating or sunken props; everything sits on the ground properly.
+
+**Look and lighting**
+- Each zone has its own lighting preset (time of day, fog, colour grading) that blends in when the player enters.
+- Light sources make sense in the world (lanterns, fires, glowing crystals, light shafts).
+- Atmosphere effects per zone: waves, fog, snow, fireflies, dripping water.
+- Ambient sound per zone: gulls, creaking wood, wind, jungle insects, echoing drips.
+
+**Gameplay readability**
+- Dig spots, stations and gates are always easy to spot against the background.
+- Nothing blocks movement by accident; players never get stuck on small props.
+- The player always knows where to go next (lit paths, signs, visible landmarks).
+
+**Performance**
+- Must run smoothly on low-end phones: use meshes and reuse models instead of thousands of tiny parts, few dynamic lights, shadows off on small decor, StreamingEnabled on.
+- Test on a real phone before launch.
+
+**Review checklist (before an area is called done):** screenshot it from spawn, from the zone entrance and from above, compare against the standards above and a reference game (for example Fisch), walk every path, and fix anything that looks flat, empty, repetitive or unfinished.
 
 ## 4. Zones
 
@@ -184,6 +251,7 @@ Developer products: coin packs, a 15-minute x2 luck potion, skip-a-zone-gate (la
 - Optional later: crews (+2% sell per crewmate nearby), PvP stealing zones where dropped loot can be taken.
 
 ## 11. Art Direction
+- See section 3 for map layout and quality standards.
 - Dark, atmospheric look inspired by "Fisch": Future lighting, Atmosphere, fog, bloom, sun rays, colour grading; dusk or night skies.
 - Each zone has its own colour identity:
 
@@ -209,7 +277,7 @@ Developer products: coin packs, a 15-minute x2 luck potion, skip-a-zone-gate (la
 - Analytics funnel: joined → first dig → first sale → first upgrade → zone 2 unlocked → first rebirth.
 
 ## 13. Build Roadmap
-1. **Playable core:** island, hub, zones 1–3, digging with the Timing Dig, Lockpick and Rune Memory minigames, selling, shovel/backpack upgrades, zone gates, levels, saving, basic HUD.
+1. **Playable core:** the island, hub and zones 1–3 built to the map standards in section 3 (no placeholder map), digging with the Timing Dig, Lockpick and Rune Memory minigames, selling, shovel/backpack upgrades, zone gates, levels, saving, basic HUD.
 2. **Playtest with friends:** do they keep playing past 10 minutes? Which minigame do they like most and least?
 3. **The hook:** cursed treasure, ghosts, Hexbreaker, knockout drop.
 4. **Zones 4–5** with Spirit Tug and Temple Seal, Perfect streaks, Quick Dig, and rebirth.
