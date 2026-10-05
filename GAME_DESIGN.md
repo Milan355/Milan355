@@ -71,9 +71,41 @@ Each zone has 5 treasures (one per rarity), its own lighting tint and its own de
 
 ## 5. Digging
 - Sparkling dig spots spawn in each zone (about 12 per zone, respawn after ~4 s).
-- Hold the prompt to dig. Hold time comes from the shovel.
+- Interacting with a spot starts that zone's **minigame** (section 5a). The result sets the treasure's quality.
 - Server checks: zone unlocked, player near the spot, backpack not full, dig cooldown.
 - **First dig ever:** guaranteed Rare with a light pillar and a "Lucky find!" banner.
+
+## 5a. Zone Minigames
+Every zone has its own minigame that matches its theme, so each unlock also feels like a new way to play. All of them:
+- take **3–8 seconds**;
+- work with **one tap/click** (or one key), so they are fine on phones;
+- are easy to learn and harder to master; the first zone's game is the easiest;
+- never give nothing: even a bad result gives a treasure.
+
+| # | Zone | Minigame | How it plays | Shovel helps by |
+|---|---|---|---|---|
+| 1 | Shipwreck Shore | **Timing Dig** | A marker swings across a bar; tap when it's in the gold zone. 3 hits. | Slower marker |
+| 2 | Smugglers' Cove | **Lockpick** | Pick a smuggler's crate: 3 pins bounce up and down; tap when each pin is in the shrinking gold band. | Wider gold band |
+| 3 | Frostfang Ruins | **Rune Memory** | Ice runes light up in a sequence (3–5 runes); repeat it by tapping them. | Runes shown longer |
+| 4 | Cursed Jungle | **Spirit Tug** | A cursed spirit fights back (Fisch-style reel): hold to keep your bar over the moving green orb until the progress meter fills. | Bigger bar, slower orb |
+| 5 | Sunken Temple | **Temple Seal** | Tap 3 stone rings to rotate them until their symbols line up before the water rises. | More time before the water |
+
+### Results
+| Result | Effect |
+|---|---|
+| **Perfect** (no mistakes) | +50% luck and x1.25 value, gold flash and sound |
+| **Good** | normal roll |
+| **Poor** (too many mistakes or time ran out) | −50% luck (mostly Common) |
+
+- A **Perfect streak** (5 Perfects in a row) gives a bonus treasure from the same zone, to reward skill.
+- Mastery: after 100 Perfects in a zone the player unlocks **Quick Dig** there, which skips the minigame and counts as Good. Good for grinding without making skill useless.
+- Cursed treasure (section 6): carrying it makes every minigame a bit harder (faster marker, smaller bands), adding to the risk.
+
+### Rules for adding new zones
+Each new zone gets either a new minigame or a themed twist on an existing one (for example, Timing Dig with moving gold zones in a storm zone). Ideas for later zones: **Bellows** (keep the forge heat in a band) for a volcano zone, **Dive** (collect treasure before air runs out) for an underwater zone, **Cannon Aim** (hit floating chests) for a sea zone.
+
+### Anti-cheat
+The server picks each minigame's parameters (speeds, sequence, ring positions) and sends them when the game starts. The client sends back its inputs with timestamps. The server checks the inputs against the parameters and a minimum play time, then decides the result itself. A result the client merely claims is never trusted.
 
 ### Rarities
 | Rarity | Chance | Base value | XP | Colour |
@@ -97,15 +129,17 @@ Luck multiplies the weights of Rare and better.
 ## 7. Progression
 
 ### Shovels
-| # | Shovel | Cost | Luck | Dig time |
+"Ease" makes every minigame easier (see the "Shovel helps by" column in section 5a).
+
+| # | Shovel | Cost | Luck | Ease |
 |---|---|---|---|---|
-| 1 | Rusty Shovel | free | +0% | 2.0 s |
-| 2 | Iron Shovel | 150 | +10% | 1.7 s |
-| 3 | Steel Shovel | 1,200 | +25% | 1.4 s |
-| 4 | Silver Shovel | 9,000 | +45% | 1.15 s |
-| 5 | Gold Shovel | 70,000 | +70% | 0.9 s |
-| 6 | Ghost Shovel | 600,000 | +100% | 0.7 s |
-| 7 | Cursed Gold Shovel | 5,000,000 | +150% | 0.5 s |
+| 1 | Rusty Shovel | free | +0% | 0% |
+| 2 | Iron Shovel | 150 | +10% | 5% |
+| 3 | Steel Shovel | 1,200 | +25% | 10% |
+| 4 | Silver Shovel | 9,000 | +45% | 15% |
+| 5 | Gold Shovel | 70,000 | +70% | 20% |
+| 6 | Ghost Shovel | 600,000 | +100% | 25% |
+| 7 | Cursed Gold Shovel | 5,000,000 | +150% | 30% |
 
 ### Backpacks
 | # | Backpack | Cost | Slots |
@@ -170,14 +204,15 @@ Developer products: coin packs, a 15-minute x2 luck potion, skip-a-zone-gate (la
 - Server-authoritative: coins, inventory, treasure rolls, unlocks, rebirth.
 - DataStore save with retries, autosave and BindToClose.
 - Modules: `Config` (all numbers above), `PlayerData`, `Dig`, `Shop`, `Zones`, `Rebirth`, `Curse`/`Ghosts`, `Retention`, `Analytics`.
+- Minigames: one server validator and one client UI module per minigame (`TimingDig`, `Lockpick`, `RuneMemory`, `SpiritTug`, `TempleSeal`), all behind a shared interface (`start(params)` → inputs → `judge(params, inputs)` → Perfect/Good/Poor). Each zone's config names its minigame and difficulty, so a new zone can reuse one.
 - Player stats replicated to the client as attributes; one RemoteFunction for shop actions, one RemoteEvent for notifications.
 - Analytics funnel: joined → first dig → first sale → first upgrade → zone 2 unlocked → first rebirth.
 
 ## 13. Build Roadmap
-1. **Playable core:** island, hub, zones 1–3, digging, selling, shovel/backpack upgrades, zone gates, levels, saving, basic HUD.
-2. **Playtest with friends:** do they keep playing past 10 minutes?
+1. **Playable core:** island, hub, zones 1–3, digging with the Timing Dig, Lockpick and Rune Memory minigames, selling, shovel/backpack upgrades, zone gates, levels, saving, basic HUD.
+2. **Playtest with friends:** do they keep playing past 10 minutes? Which minigame do they like most and least?
 3. **The hook:** cursed treasure, ghosts, Hexbreaker, knockout drop.
-4. **Zones 4–5 and rebirth.**
+4. **Zones 4–5** with Spirit Tug and Temple Seal, Perfect streaks, Quick Dig, and rebirth.
 5. **Polish:** lighting, sounds, UI art, first-dig lucky find, mobile check.
 6. **Launch kit:** game passes, icon, thumbnails, badges, daily rewards.
 7. **Launch:** spend the $100 in one burst over a weekend, watch retention in the Creator Dashboard.
@@ -187,3 +222,4 @@ Developer products: coin packs, a 15-minute x2 luck potion, skip-a-zone-gate (la
 - Cursed treasure chance and ghost difficulty.
 - PvP stealing zones: in v1 or later?
 - Level-gate numbers after the first playtest.
+- Minigame difficulty curves and the exact Perfect/Good/Poor thresholds.
